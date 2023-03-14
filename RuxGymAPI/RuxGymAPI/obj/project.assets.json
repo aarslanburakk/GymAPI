@@ -2746,11 +2746,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Burak Arslan\\Desktop\\RuxGymAPI\\RuxGymAPI\\RuxGymAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Burak Arslan\\Documents\\GitHub\\GymAPI\\RuxGymAPI\\RuxGymAPI\\RuxGymAPI.csproj",
       "projectName": "RuxGymAPI",
-      "projectPath": "C:\\Users\\Burak Arslan\\Desktop\\RuxGymAPI\\RuxGymAPI\\RuxGymAPI.csproj",
+      "projectPath": "C:\\Users\\Burak Arslan\\Documents\\GitHub\\GymAPI\\RuxGymAPI\\RuxGymAPI\\RuxGymAPI.csproj",
       "packagesPath": "C:\\Users\\Burak Arslan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Burak Arslan\\Desktop\\RuxGymAPI\\RuxGymAPI\\obj\\",
+      "outputPath": "C:\\Users\\Burak Arslan\\Documents\\GitHub\\GymAPI\\RuxGymAPI\\RuxGymAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

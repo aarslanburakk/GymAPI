@@ -79,7 +79,7 @@ namespace RuxGymAPI.Controllers
             return Ok(playerstats);
 
         }
-
+        //d
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutData(string id, [FromBody] PlayerStat data)

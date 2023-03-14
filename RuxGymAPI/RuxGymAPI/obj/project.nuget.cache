@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "B8nvWrUB434vaxxLH6ci+72nljUjkVBX4iWoerg7nb/nfxFMAkCmTIA6K9USMHABYh8oth2ulCqPLHb6kcmpkw==",
+  "dgSpecHash": "WdEg89lAbjn7iEiTkor5YhNewAd2CSxVqDjccPGme0KoHaZOMD9R9aLGHOcgtLaSTrADWMUUcgvMQh4CfFOKcQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Burak Arslan\\Desktop\\RuxGymAPI\\RuxGymAPI\\RuxGymAPI.csproj",
+  "projectFilePath": "C:\\Users\\Burak Arslan\\Documents\\GitHub\\GymAPI\\RuxGymAPI\\RuxGymAPI\\RuxGymAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Burak Arslan\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\Burak Arslan\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
