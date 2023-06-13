@@ -79,20 +79,19 @@ namespace RuxGymAPI.Controllers
         public async Task<IActionResult> MrOlimpiaPlayer(string username)
         {
             IQueryable<PlayerStat> query = _context.PlayerStats;
+            IQueryable<Player> playerQuery = _context.Players;
 
-            query = query.OrderByDescending(d => d.ALlPower);
+            var sortedQuery = query.OrderByDescending(d => d.ALlPower);
 
-            var result = await query
+            var result = await sortedQuery
                 .Select(x => new
                 {
                     UserId = x.UserId,
                     UserName = _context.Players.Where(p => p.Id == x.UserId).Select(p => p.UserName).FirstOrDefault(),
                     ALlPower = x.ALlPower
                 })
-                .Take(100)
                 .ToListAsync();
 
-            // Add the rank property in-memory
             var newresult = result.Select((x, i) => new
             {
                 Rank = i + 1,
@@ -100,11 +99,19 @@ namespace RuxGymAPI.Controllers
                 x.UserName,
                 x.ALlPower
             })
-               .ToList();
-            var currentUser = newresult.Where(z => z.UserName == username);
+            .ToList();
+            var userTop100 = newresult.Take(100).ToList();
 
-            return Ok(new { GeneralRank = newresult, GeneralRankUser = currentUser });
+            Player? currentUser = await playerQuery.FirstOrDefaultAsync(z => z.UserName == username);
+
+            var userRank = newresult.FirstOrDefault(x => x.UserId == currentUser.Id)?.Rank;
+
+            return Ok(new { GeneralRank = userTop100, GeneralRankUser = userRank });
         }
+
+
+
+
 
 
         [HttpGet("mrOlimpiaWinerList")]
@@ -134,16 +141,7 @@ namespace RuxGymAPI.Controllers
         }
 
 
-        [HttpGet("Joiners")]
-        public async Task<IActionResult> JoinersOlympia()
-                {
-            IQueryable<PlayerStat> query = _context.PlayerStats;
-            query = query.OrderByDescending(c => c.ALlPower);
-            var joiners = await query.Where(z => z.IsOlimpia.Equals(true)).ToListAsync();
 
-            return Ok(joiners);
-
-        }
         [HttpGet("count")]
         public async Task<IActionResult> JoinersOlimpiaCount()
         {

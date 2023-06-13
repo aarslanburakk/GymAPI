@@ -6,10 +6,12 @@
         public string Email { get; set; }
         public string UserName { get; set; }
         public byte[] Password { get; set; }
-
         public string CreatedDate { get; set; }
         public string? LastConnectionDate { get; set; }
         public bool IsOnline { get; set; }
+        public bool IsGuest { get; set; }
+        public bool IsFacebookUser { get; set; }
+        public string? FacebookId { get; set; }
         
        
     }

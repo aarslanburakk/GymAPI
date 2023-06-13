@@ -13,10 +13,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepository, EfRepository>();
-var connetionString = builder.Configuration.GetConnectionString("Default");
+
+
+var connetionString = builder.Configuration.GetConnectionString("Defaultsql");
 builder.Services.AddDbContext<RuxGymDBcontext>(options =>
 {
     options.UseMySql(connetionString, ServerVersion.AutoDetect(connetionString));
+    //options.UseSqlServer(connetionString);
     options.EnableSensitiveDataLogging(true);
 });
 var app = builder.Build();

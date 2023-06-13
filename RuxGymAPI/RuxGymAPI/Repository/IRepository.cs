@@ -15,6 +15,11 @@ namespace RuxGymAPI.Repository
         public Task<bool> UpdatePlayerOnlineAsync(string id, bool isOnline);
         public Task<bool> SendEmailCodeAsync(string email);
 
+        public Task<bool> MergeFacebookUser(string id, string facebookId);
+        public Task<bool> ChangeUserName(string id, string userName);
+        public Task<Player> GetFacebookUser(string facebookId);
+        public Task MergeGuestUser(string id, CreatePlayerVM data);
+
         public Task<string> ChangePasswordAsync(ResetPasswordVM data);
         
     }

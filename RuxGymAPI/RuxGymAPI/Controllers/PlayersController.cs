@@ -20,21 +20,21 @@ namespace RuxGymAPI.Controllers
     {
         private static string key = "ruxgameearn1milliondolarin2024on";
         private readonly IRepository repository;
-        private string code = null;
-        
+
+
         public PlayersController(IRepository context)
         {
             repository = context;
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerVM player)
         {
 
             var PlayerEmail = await repository.Players.FirstOrDefaultAsync(x => x.Email.Equals(player.Email));
             var PlayerUserName = await repository.Players.FirstOrDefaultAsync(x => x.UserName.Equals(player.UserName));
-           
+
             if (PlayerEmail != null)
             {
                 return Ok("Email Taken");
@@ -76,20 +76,62 @@ namespace RuxGymAPI.Controllers
                 return Ok("Email not found");
             }
         }
+        [HttpGet("facebookId")]
+        public async Task<IActionResult> GetFacebookUser(string facebookId)
+        {
+            var result = await repository.GetFacebookUser(facebookId);
 
 
+            return Ok(result);
 
 
+        }
+
+
+        [HttpPut("mergeid")]
+        public async Task<IActionResult> MergeUser(string mergeid, string facebookId)
+        {
+            var result = await repository.MergeFacebookUser(mergeid, facebookId);
+            return Ok(result);
+        }
+        [HttpPut("nameid")]
+        public async Task<IActionResult> ChangeName(string nameid, string userName)
+        {
+            var result = await repository.ChangeUserName(nameid, userName);
+            return Ok(result);
+        }
         [HttpPut("{id}")]
         public async Task<IActionResult> GetUser(string id, bool isOnline)
         {
 
             var resut = await repository.UpdatePlayerOnlineAsync(id, isOnline);
-          return Ok(resut);
-          
+            return Ok(resut);
+
         }
 
+        [HttpPut("mergeGuest")]
+        public async Task<IActionResult> MergeGuest(string id, CreatePlayerVM data)
+        {
+            var PlayerEmail = await repository.Players.FirstOrDefaultAsync(x => x.Email.Equals(data.Email));
+            var PlayerUserName = await repository.Players.FirstOrDefaultAsync(x => x.UserName.Equals(data.UserName));
 
+            if (PlayerEmail != null)
+            {
+                return Ok("Email Taken");
+            }
+            else if (PlayerUserName != null)
+            {
+                return Ok("Username Taken");
+            }
+            else
+            {
+                await repository.MergeGuestUser(id, data);  
+                return Ok(true);
+            }
+
+
+
+        }
 
 
         [HttpPost("email")]
@@ -101,7 +143,7 @@ namespace RuxGymAPI.Controllers
         [HttpPut("code")]
         public async Task<IActionResult> ResetPassword(ResetPasswordVM data)
         {
-            
+
             return Ok(await repository.ChangePasswordAsync(data));
 
         }

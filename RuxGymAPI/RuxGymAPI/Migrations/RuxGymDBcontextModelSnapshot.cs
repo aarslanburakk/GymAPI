@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RuxGymAPI.Context;
 
@@ -16,22 +17,40 @@ namespace RuxGymAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("RuxGymAPI.Models.OlimpiaWeek", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Week")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OlimpiaWeeks");
+                });
 
             modelBuilder.Entity("RuxGymAPI.Models.PasswordCode", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CodeKey")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserID")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -42,32 +61,38 @@ namespace RuxGymAPI.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedDate")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsOlimpia")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<string>("FacebookId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFacebookUser")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGuest")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsOnline")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastConnectionDate")
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("Password")
                         .IsRequired()
-                        .HasColumnType("longblob");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -78,44 +103,93 @@ namespace RuxGymAPI.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EndEnergyTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PlayerCurrentEnergy")
                         .HasColumnType("int");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PlayerLastEnergyDate")
+                    b.Property<string>("StartEnergyTime")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PlayerUseEnergyDate")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("PlayerEnergies");
                 });
 
+            modelBuilder.Entity("RuxGymAPI.Models.PlayerGymItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AbsItem")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BenchPressItem")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeadLiftItem")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DumbbellPressItem")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SquatItem")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlayerGymItems");
+                });
+
+            modelBuilder.Entity("RuxGymAPI.Models.PlayerPremium", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EndPremiumDay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("isPremium")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlayerPremia");
+                });
+
             modelBuilder.Entity("RuxGymAPI.Models.PlayerStat", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<float>("ALlPower")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<float>("ArmPower")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<float>("BackPower")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<float>("ChestPower")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<int>("CreatinItem")
                         .HasColumnType("int");
@@ -123,8 +197,14 @@ namespace RuxGymAPI.Migrations
                     b.Property<int>("EnergyItem")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsOlimpia")
+                        .HasColumnType("bit");
+
                     b.Property<float>("LegPower")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
+
+                    b.Property<int>("OlimpiaWin")
+                        .HasColumnType("int");
 
                     b.Property<int>("PlayerCash")
                         .HasColumnType("int");
@@ -132,8 +212,8 @@ namespace RuxGymAPI.Migrations
                     b.Property<int>("PlayerDiamond")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("PlayerGoldTicket")
+                        .HasColumnType("int");
 
                     b.Property<int>("PlayerSpinCount")
                         .HasColumnType("int");
@@ -142,14 +222,12 @@ namespace RuxGymAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<float>("SixpackPower")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("PlayerId");
 
                     b.ToTable("PlayerStats");
                 });
@@ -158,31 +236,17 @@ namespace RuxGymAPI.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedSpinTime")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("PlayerLastSpinDate")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PlayerUseSpinDate")
-                        .HasColumnType("longtext");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.ToTable("SpinDateTimes");
-                });
-
-            modelBuilder.Entity("RuxGymAPI.Models.PlayerStat", b =>
-                {
-                    b.HasOne("RuxGymAPI.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
                 });
 #pragma warning restore 612, 618
         }

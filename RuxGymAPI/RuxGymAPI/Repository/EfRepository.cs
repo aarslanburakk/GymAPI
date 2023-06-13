@@ -34,12 +34,14 @@ namespace RuxGymAPI.Repository
         public EfRepository(RuxGymDBcontext context)
         {
             _context = context;
-           
+
         }
         public IQueryable<Player> Players => _context.Players;
 
         public async Task AddPlayerAsync(CreatePlayerVM data)
         {
+
+
             DateTime time = await timeAPI.GetCurrentDateTimeInTimeZone("Europe/London");
             string stringTime = time.ToString("dd.MM.yyyy HH:mm:ss");
             Guid id = Guid.NewGuid();
@@ -52,6 +54,9 @@ namespace RuxGymAPI.Repository
                 CreatedDate = stringTime,
                 LastConnectionDate = null,
                 IsOnline = false,
+                IsGuest = data.IsGuest,
+                IsFacebookUser = data.IsFacebookUser,
+                FacebookId = data.FacebookId,
 
 
             });
@@ -67,8 +72,8 @@ namespace RuxGymAPI.Repository
                 ProteinItem = 0,
                 CreatinItem = 0,
                 EnergyItem = 0,
-                PlayerDiamond = 5,
-                PlayerCash = 5000,
+                PlayerDiamond = 10,
+                PlayerCash = 35000,
                 PlayerSpinCount = 5,
                 PlayerGoldTicket = 0,
                 OlimpiaWin = 0,
@@ -116,7 +121,16 @@ namespace RuxGymAPI.Repository
             });
 
             await _context.SaveChangesAsync();
+
+
+
         }
+
+
+
+
+
+
         public async Task<bool> UpdatePlayerOnlineAsync(string id, bool isOnline)
         {
             Player? currentPlayer = await _context.Players.FirstOrDefaultAsync(data => data.Id.Equals(Guid.Parse(id)));
@@ -133,6 +147,46 @@ namespace RuxGymAPI.Repository
                 currentPlayer.LastConnectionDate = stringTime.ToString();
                 await _context.SaveChangesAsync();
                 return true;
+            }
+        }
+        public async Task MergeGuestUser(string id, CreatePlayerVM data)
+        {
+            Player? player = await _context.Players.FirstOrDefaultAsync(x => x.Id.Equals(Guid.Parse(id)));
+            player.IsGuest = false;
+            player.Email = data.Email;
+            player.Password = EncryptStringToBytes_Aes(data.Password, key);
+            player.UserName = data.UserName;
+            await _context.SaveChangesAsync();
+
+        }
+        public async Task<bool> MergeFacebookUser(string id, string facebookId)
+        {
+            Player? player = await _context.Players.FirstOrDefaultAsync(x => x.Id.Equals(Guid.Parse(id)));
+
+            if (player == null)
+            {
+                return false;
+
+            }
+            else
+            {
+                player.IsGuest = false;
+                player.IsFacebookUser = true;
+                player.FacebookId = facebookId;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
+        public async Task<Player> GetFacebookUser(string facebookId)
+        {
+            Player? user = await _context.Players.FirstOrDefaultAsync(z => z.FacebookId.Equals(facebookId));
+            if (user == null)
+            {
+                return user;
+            }
+            else
+            {
+                return user;
             }
         }
         public async Task<bool> SendEmailCodeAsync(string email)
@@ -170,6 +224,7 @@ namespace RuxGymAPI.Repository
                 return false;
             }
         }
+
         public async Task<string> ChangePasswordAsync(ResetPasswordVM data)
         {
             var passwordCode = await _context.PasswordCodes.FirstOrDefaultAsync(x => x.CodeKey.Equals(data.CodeKey));
@@ -196,6 +251,23 @@ namespace RuxGymAPI.Repository
                 return "false";
             }
 
+        }
+        public async Task<bool> ChangeUserName(string id, string userName)
+        {
+            Player? player = await _context.Players.FirstOrDefaultAsync(x => x.Id.Equals(Guid.Parse(id)));
+
+            if (player == null)
+            {
+                return false;
+
+            }
+            else
+            {
+
+                player.UserName = userName;
+                await _context.SaveChangesAsync();
+                return true;
+            }
         }
         public static string DecryptStringFromBytes_Aes(byte[] cipherText, string key)
         {
@@ -246,7 +318,7 @@ namespace RuxGymAPI.Repository
             }
         }
 
-     
+
     }
 }
 
