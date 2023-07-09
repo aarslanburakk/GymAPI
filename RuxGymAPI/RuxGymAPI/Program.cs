@@ -2,6 +2,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using RuxGymAPI.Context;
 using RuxGymAPI.Repository;
+using System.Configuration;
 using System.Web.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,10 +19,12 @@ builder.Services.AddScoped<IRepository, EfRepository>();
 var connetionString = builder.Configuration.GetConnectionString("Defaultsql");
 builder.Services.AddDbContext<RuxGymDBcontext>(options =>
 {
-    options.UseMySql(connetionString, ServerVersion.AutoDetect(connetionString));
-    //options.UseSqlServer(connetionString);
+    options.UseMySql(connetionString, new MySqlServerVersion(new Version(8, 0, 26)));
     options.EnableSensitiveDataLogging(true);
+    
+    // Diðer yapýlandýrmalar
 });
+
 var app = builder.Build();
 
 

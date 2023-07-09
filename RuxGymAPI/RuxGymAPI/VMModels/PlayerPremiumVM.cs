@@ -4,7 +4,7 @@
 
     {
 
-        public bool isPremium { get; set; }
+        public bool IsPremium { get; set; }
         public string? EndPremiumDay { get; set; }
     }
 }

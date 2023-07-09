@@ -21,7 +21,7 @@ namespace RuxGymAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPremiumStats(string id)
         {
-            var playerPremium = await _context.PlayerPremia.FirstOrDefaultAsync(data => data.UserId == Guid.Parse(id));
+            var playerPremium = await _context.PlayerPremia.FirstOrDefaultAsync(data => data.PlayerId == Guid.Parse(id));
 
             return Ok(playerPremium);
 
@@ -29,12 +29,12 @@ namespace RuxGymAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePremiumDate(string id, [FromBody] PlayerPremiumVM data)
         {
-            var playerPremium = await _context.PlayerPremia.FirstOrDefaultAsync(data => data.UserId == Guid.Parse(id));
+            var playerPremium = await _context.PlayerPremia.FirstOrDefaultAsync(data => data.PlayerId == Guid.Parse(id));
             if (playerPremium == null)
             {
                 return NotFound();
             }
-            playerPremium.isPremium = data.isPremium;
+            playerPremium.IsPremium = data.IsPremium;
             playerPremium.EndPremiumDay = data.EndPremiumDay;
             await _context.SaveChangesAsync();
             return Ok(playerPremium);

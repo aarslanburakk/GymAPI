@@ -6,7 +6,8 @@ using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace RuxGymAPI.Repository
 {
@@ -16,6 +17,7 @@ namespace RuxGymAPI.Repository
         private static string key = "ruxgameearn1milliondolarin2024on";
         private WorldTimeAPI timeAPI = new WorldTimeAPI();
         private string code = null;
+        private Timer _timer;
         private string getCode()
         {
             if (code == null)
@@ -34,20 +36,22 @@ namespace RuxGymAPI.Repository
         public EfRepository(RuxGymDBcontext context)
         {
             _context = context;
+            _timer = new Timer(60000); // 60 saniye (60000 milisaniye)
+            _timer.Elapsed += async (sender, e) => await TimerElapsed(sender, e);
+            _timer.AutoReset = true;
+
 
         }
         public IQueryable<Player> Players => _context.Players;
 
+
         public async Task AddPlayerAsync(CreatePlayerVM data)
         {
-
-
             DateTime time = await timeAPI.GetCurrentDateTimeInTimeZone("Europe/London");
             string stringTime = time.ToString("dd.MM.yyyy HH:mm:ss");
-            Guid id = Guid.NewGuid();
-            await _context.Players.AddAsync(new()
+            var player = new Player
             {
-                Id = id,
+                Id = Guid.NewGuid(),
                 Email = data.Email,
                 UserName = data.UserName,
                 Password = EncryptStringToBytes_Aes(data.Password, key),
@@ -58,79 +62,65 @@ namespace RuxGymAPI.Repository
                 IsFacebookUser = data.IsFacebookUser,
                 FacebookId = data.FacebookId,
 
-
-            });
-            await _context.PlayerStats.AddAsync(new()
+            };
+            var playerStat = new PlayerStat()
             {
-                ID = Guid.NewGuid(),
-                ALlPower = 50,
-                ArmPower = 10,
-                SixpackPower = 10,
-                BackPower = 10,
-                LegPower = 10,
-                ChestPower = 10,
-                ProteinItem = 0,
-                CreatinItem = 0,
-                EnergyItem = 0,
-                PlayerDiamond = 10,
-                PlayerCash = 35000,
-                PlayerSpinCount = 5,
-                PlayerGoldTicket = 0,
-                OlimpiaWin = 0,
-                IsOlimpia = false,
-                UserId = id,
-
-
-
-
-            });
-            await _context.PlayerGymItems.AddAsync(new()
+                PlayerId = player.Id,
+            };
+            var playerEnergy = new PlayerEnergy()
             {
-                Id = Guid.NewGuid(),
-                DumbbellPressItem = 0,
-                AbsItem = 0,
-                SquatItem = 0,
-                DeadLiftItem = 0,
-                BenchPressItem = 0,
-                UserID = id
-
-            });
-            await _context.PlayerEnergies.AddAsync(new()
-            {
-                Id = Guid.NewGuid(),
-                PlayerCurrentEnergy = 100,
                 StartEnergyTime = stringTime,
                 EndEnergyTime = stringTime,
-                PlayerId = id
-
-            });
-            await _context.SpinDateTimes.AddAsync(new()
+                PlayerId = player.Id
+            };
+            var playerSpinTime = new PlayerSpinTime()
             {
-                Id = Guid.NewGuid(),
+
                 CreatedSpinTime = stringTime,
-                PlayerId = id
-
-            });
-            await _context.PlayerPremia.AddAsync(new()
+                PlayerId = player.Id
+            };
+            var playerGymItem = new PlayerGymItem()
             {
-                Id = Guid.NewGuid(),
-                isPremium = false,
-                EndPremiumDay = null,
-                UserId = id
+                PlayerId = player.Id,
+            };
+            var playerPremium = new PlayerPremium()
+            {
+                PlayerId = player.Id
+            };
+            var playerBoxing = new PlayerBoxing()
+            {
+                PlayerId = player.Id
+            };
+            player.PlayerStat = playerStat;
+            player.PlayerEnergy = playerEnergy;
+            player.PlayerSpinTime = playerSpinTime;
+            player.PlayerGymItem = playerGymItem;
+            player.PlayerPremium = playerPremium;
+            player.PlayerBoxing = playerBoxing;
 
-            });
+
+            await _context.AddAsync(player);
+
+
 
             await _context.SaveChangesAsync();
 
 
 
         }
+        public async Task<Player> GetPlayerData(string id)
+        {
+            Player? player = await _context.Players
+                .Include(q => q.PlayerStat)
+                .Include(q => q.PlayerEnergy)
+                .Include(w => w.PlayerSpinTime)
+                .Include(e => e.PlayerGymItem)
+                .Include(c => c.PlayerPremium)
+                .Include(x => x.PlayerBoxing).FirstOrDefaultAsync(v => v.Id.Equals(Guid.Parse(id)));
+            return player;
+        }
 
-
-
-
-
-
+       
         public async Task<bool> UpdatePlayerOnlineAsync(string id, bool isOnline)
         {
             Player? currentPlayer = await _context.Players.FirstOrDefaultAsync(data => data.Id.Equals(Guid.Parse(id)));
@@ -194,9 +184,18 @@ namespace RuxGymAPI.Repository
             var user = await _context.Players.FirstOrDefaultAsync(w => w.Email.Equals(email));
             if (user != null)
             {
-                _context.PasswordCodes.Add(new PasswordCode { Id = Guid.NewGuid(), UserID = user.Id.ToString(), CodeKey = getCode() });
+                var code = getCode();
+                var passwordCode = new PasswordCode
+                {
+                    Id = Guid.NewGuid(),
+                    PlayerId = user.Id.ToString(),
+                    CodeKey = code,
+                    CreatedTime = DateTime.Now // Şifrenin oluşturulma zamanını ayarla
+                };
+                _context.PasswordCodes.Add(passwordCode);
                 await _context.SaveChangesAsync();
-                string text = "<h3>Password Code: </h3>" + getCode() + " ";
+
+                string text = "<h3>Password Code: </h3>" + code + " ";
                 string subject = "Rux Gym Reset Password Code";
                 string fromMail = "ruxgames.info@gmail.com";
                 string fromPassword = "bplhoktwnarxoqvq";
@@ -215,7 +214,7 @@ namespace RuxGymAPI.Repository
 
                 smtpClient.Send(message);
 
-
+                _timer.Start(); // Zamanlayıcıyı başlat
 
                 return true;
             }
@@ -224,13 +223,43 @@ namespace RuxGymAPI.Repository
                 return false;
             }
         }
+        public async Task DeleteCodes()
+        {
+            var expiredCodes = await _context.PasswordCodes
+         .Where(code => code.CreatedTime.AddSeconds(60) <= DateTime.Now)
+         .ToListAsync();
 
+            _context.PasswordCodes.RemoveRange(expiredCodes);
+            await _context.SaveChangesAsync();
+        }
+        private async Task TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            string apiUrl = "http://104.40.246.13/RuxGym/api/Players/version"; // API'nin URL'i
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.DeleteAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("DELETE isteği başarılı bir şekilde gönderildi.");
+                }
+                else
+                {
+                    Console.WriteLine($"DELETE isteği başarısız oldu. Hata kodu: {response.StatusCode}");
+                }
+            }
+
+            _timer.Stop();
+
+
+        }
         public async Task<string> ChangePasswordAsync(ResetPasswordVM data)
         {
             var passwordCode = await _context.PasswordCodes.FirstOrDefaultAsync(x => x.CodeKey.Equals(data.CodeKey));
             if (passwordCode != null)
             {
-                var user = await _context.Players.FirstOrDefaultAsync(c => c.Id.Equals(Guid.Parse(passwordCode.UserID)));
+                var user = await _context.Players.FirstOrDefaultAsync(c => c.Id.Equals(Guid.Parse(passwordCode.PlayerId)));
                 var newPassword = EncryptStringToBytes_Aes(data.NewPassword, key);
                 if (user.Email.Equals(data.UserEmail))
                 {
@@ -268,6 +297,11 @@ namespace RuxGymAPI.Repository
                 await _context.SaveChangesAsync();
                 return true;
             }
+        }
+        public async Task<GameVersion> GetGameVersion()
+        {
+            var data = await _context.GameVersions.FirstOrDefaultAsync(z => z.Id == 1);
+            return data;
         }
         public static string DecryptStringFromBytes_Aes(byte[] cipherText, string key)
         {
@@ -318,7 +352,7 @@ namespace RuxGymAPI.Repository
             }
         }
 
-
+        
     }
 }
 

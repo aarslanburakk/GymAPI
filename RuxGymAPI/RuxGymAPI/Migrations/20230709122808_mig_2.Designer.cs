@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RuxGymAPI.Context;
 
@@ -10,9 +11,11 @@ using RuxGymAPI.Context;
 namespace RuxGymAPI.Migrations
 {
     [DbContext(typeof(RuxGymDBcontext))]
-    partial class RuxGymDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20230709122808_mig_2")]
+    partial class mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,11 +207,11 @@ namespace RuxGymAPI.Migrations
                     b.Property<string>("EndPremiumDay")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsPremium")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<Guid>("PlayerId")
                         .HasColumnType("char(36)");
+
+                    b.Property<bool>("isPremium")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 

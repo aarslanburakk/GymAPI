@@ -1,14 +1,19 @@
-﻿namespace RuxGymAPI.Models
+﻿using System.Text.Json.Serialization;
+namespace RuxGymAPI.Models
 {
     public class PlayerGymItem
     {
-        public Guid Id { get; set; }
-        public int DumbbellPressItem { get; set; }
-        public int AbsItem { get; set; }
-        public int SquatItem { get; set; }
-        public int DeadLiftItem { get; set; }
-        public int BenchPressItem{ get; set; }
-        public Guid UserID { get; set; }
+        [JsonIgnore]
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public int DumbbellPressItem { get; set; } = 0;
+        public int AbsItem { get; set; } = 0;
+        public int SquatItem { get; set; } = 0;
+        public int DeadLiftItem { get; set; } = 0;
+        public int BenchPressItem { get; set; } = 0;
+        [JsonIgnore]
+        public Guid PlayerId { get; set; }
+        [JsonIgnore]
+        public Player Player { get; set; }
 
     }
 }

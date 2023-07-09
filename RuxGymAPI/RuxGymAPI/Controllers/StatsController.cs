@@ -19,20 +19,11 @@ namespace RuxGymAPI.Controllers
             _context = context;
         }
 
-        // id and get player stats
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPlayerStat(string id)
-        {
-            var playerstats = await _context.PlayerStats.FirstOrDefaultAsync(data => data.UserId == Guid.Parse(id));
-
-            return Ok(playerstats);
-
-        }
-
+       
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutData(string id, [FromBody] UpdatePlayerStat data)
+        public async Task<IActionResult> UpdatePlayerStat(string id, UpdatePlayerStat data)
         {
-            PlayerStat? existingData = await _context.PlayerStats.FirstOrDefaultAsync(data => data.UserId == Guid.Parse(id));
+            PlayerStat? existingData = await _context.PlayerStats.FirstOrDefaultAsync(data => data.PlayerId == Guid.Parse(id));
             if (existingData == null)
             {
                 return NotFound();
@@ -60,7 +51,7 @@ namespace RuxGymAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> OlimpiaUpdate(string MrOlimpiaPlayerID, bool isJoinedOlimpia)
         {
-            var currentPlayer = await _context.PlayerStats.FirstOrDefaultAsync(data => data.UserId == Guid.Parse(MrOlimpiaPlayerID));
+            var currentPlayer = await _context.PlayerStats.FirstOrDefaultAsync(data => data.PlayerId == Guid.Parse(MrOlimpiaPlayerID));
             if (currentPlayer == null)
             {
                 return Ok(false);
@@ -75,6 +66,30 @@ namespace RuxGymAPI.Controllers
 
         }
 
+
+        [HttpGet("BoxingData")]
+        public async Task<IActionResult> UpdatePlayerStat(string userId)
+        {
+            var data = await _context.PlayerBoxings.FirstOrDefaultAsync(c => c.PlayerId == Guid.Parse(userId));
+
+            return Ok(data);
+        }
+
+        [HttpPut("UpdateBoxData")]
+        public async Task<IActionResult> UpdatePlayerStat(string userId, PlayerBoxing data)
+        {
+            var updateData = await _context.PlayerBoxings.FirstOrDefaultAsync(c => c.PlayerId == Guid.Parse(userId));
+
+            updateData.BoxPower = data.BoxPower;
+            updateData.BoxHighScore = data.BoxHighScore;
+            await _context.SaveChangesAsync();
+            return Ok(true);
+
+        }
+
+
+
+
         [HttpGet("UserAllPower")]
         public async Task<IActionResult> MrOlimpiaPlayer(string username)
         {
@@ -86,8 +101,8 @@ namespace RuxGymAPI.Controllers
             var result = await sortedQuery
                 .Select(x => new
                 {
-                    UserId = x.UserId,
-                    UserName = _context.Players.Where(p => p.Id == x.UserId).Select(p => p.UserName).FirstOrDefault(),
+                    UserId = x.PlayerId,
+                    UserName = _context.Players.Where(p => p.Id == x.PlayerId).Select(p => p.UserName).FirstOrDefault(),
                     ALlPower = x.ALlPower
                 })
                 .ToListAsync();
@@ -122,7 +137,7 @@ namespace RuxGymAPI.Controllers
             query = query.OrderByDescending(d => d.OlimpiaWin);
 
             var result = await query
-                .Select(x => new { UserName = _context.Players.Where(p => p.Id == x.UserId).Select(p => p.UserName).FirstOrDefault(), OlimpiaWin = x.OlimpiaWin })
+                .Select(x => new { UserName = _context.Players.Where(p => p.Id == x.PlayerId).Select(p => p.UserName).FirstOrDefault(), OlimpiaWin = x.OlimpiaWin })
                 .ToListAsync();
 
             // Add the rank property in-memory

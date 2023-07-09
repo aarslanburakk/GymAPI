@@ -21,7 +21,7 @@ namespace RuxGymAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPlayerItem(string id)
         {
-            var gymItem = await _context.PlayerGymItems.FirstOrDefaultAsync(data => data.UserID == Guid.Parse(id));
+            var gymItem = await _context.PlayerGymItems.FirstOrDefaultAsync(data => data.PlayerId == Guid.Parse(id));
 
             return Ok(gymItem);
 
@@ -30,7 +30,7 @@ namespace RuxGymAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePlayerItem(string id, PlayerGymItemVM gymItemData)
         {
-            var existingData = await _context.PlayerGymItems.FirstOrDefaultAsync(data => data.UserID == Guid.Parse(id));
+            var existingData = await _context.PlayerGymItems.FirstOrDefaultAsync(data => data.PlayerId == Guid.Parse(id));
             if (existingData == null)
             {
                 return Ok(false);

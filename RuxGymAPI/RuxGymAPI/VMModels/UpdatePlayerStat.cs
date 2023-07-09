@@ -15,5 +15,7 @@
         public int PlayerDiamond { get; set; }
         public int PlayerSpinCount { get; set; }
         public int PlayerGoldTicket { get; set; }
+        public int OlimpiaWin { get; set; }
+        public bool IsOlimpia { get; set; }
     }
 }

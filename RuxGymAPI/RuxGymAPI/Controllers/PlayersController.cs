@@ -64,7 +64,8 @@ namespace RuxGymAPI.Controllers
                 string decryptedPassword = EfRepository.DecryptStringFromBytes_Aes(currentUser.Password, key);
                 if (decryptedPassword == playerPassword)
                 {
-                    return Ok(currentUser);
+                    Player player = await repository.GetPlayerData(currentUser.Id.ToString());
+                    return Ok(player);
                 }
                 else
                 {
@@ -76,6 +77,9 @@ namespace RuxGymAPI.Controllers
                 return Ok("Email not found");
             }
         }
+
+        
+
         [HttpGet("facebookId")]
         public async Task<IActionResult> GetFacebookUser(string facebookId)
         {
@@ -125,7 +129,7 @@ namespace RuxGymAPI.Controllers
             }
             else
             {
-                await repository.MergeGuestUser(id, data);  
+                await repository.MergeGuestUser(id, data);
                 return Ok(true);
             }
 
@@ -148,7 +152,19 @@ namespace RuxGymAPI.Controllers
 
         }
 
+        [HttpGet("version")]
+        public async Task<IActionResult> GetVersion()
+        {
+            var d = await repository.GetGameVersion();
+            return Ok(d.Version);
 
+        }
+        [HttpDelete("version")]
+        public async Task<IActionResult> delete()
+        {
+            await repository.DeleteCodes();
+            return Ok();
 
+        }
     }
 }

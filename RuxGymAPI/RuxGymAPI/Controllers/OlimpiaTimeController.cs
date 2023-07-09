@@ -16,21 +16,45 @@ namespace RuxGymAPI.Controllers
     {
 
         private readonly RuxGymDBcontext _context;
-       
+        private Timer _timer;
+        private bool isTimerElapsed = true;
+
         public OlimpiaTimeController(RuxGymDBcontext context)
         {
 
 
             _context = context;
+
         }
 
-        
+        private async Task TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            string apiUrl = "http://104.40.246.13/RuxGym/api/OlimpiaTime/Admin?key=RuxMilliondolar"; // API'nin URL'i
+            isTimerElapsed = true;
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.PutAsync(apiUrl,null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("DELETE isteği başarılı bir şekilde gönderildi.");
+                }
+                else
+                {
+                    Console.WriteLine($"DELETE isteği başarısız oldu. Hata kodu: {response.StatusCode}");
+                }
+            }
+
+            StartTime();
+
+        }
 
         [HttpGet]
         public IActionResult GetAsync()
         {
 
             string value = TimeUntilNextMondayAtMidnight().ToString();
+
             return Ok(value);
         }
 
@@ -148,14 +172,26 @@ namespace RuxGymAPI.Controllers
         }
 
 
-
-        static TimeSpan TimeUntilNextTenMinutes()
+        [HttpPost]
+        public async Task<IActionResult> StartOlimpia()
         {
-            DateTime now = DateTime.Now; // Şu anki zamanı al
-            DateTime nextHour = now.Date.AddHours(now.Hour + 1); // Bir sonraki saat için DateTime oluştur
-            return nextHour - now; // Geriye kalan süreyi hesapla
+            var count = StartTime();
+            return Ok(count);
         }
 
+        private double StartTime()
+        {
+            var date = TimeUntilNextMondayAtMidnight();
+            if (isTimerElapsed)
+            {
+                _timer = new Timer(date.TotalMilliseconds);
+                _timer.Elapsed += async (sender, e) => await TimerElapsed(sender, e);
+                _timer.AutoReset = false;
+                isTimerElapsed = false;
+                _timer.Start();
+            }
+            return date.TotalMilliseconds;
+        }
 
         // every week
         static TimeSpan TimeUntilNextMondayAtMidnight()

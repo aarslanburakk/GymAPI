@@ -2,15 +2,16 @@
 
 namespace RuxGymAPI.Models
 {
-    public class PlayerPremium
+    public class PlayerBoxing
     {
         [JsonIgnore]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public bool IsPremium { get; set; } = false;
-        public string? EndPremiumDay { get; set; } = null;
+        public ulong BoxPower { get; set; } = 0;
+        public int BoxHighScore { get; set; } = 0;
         [JsonIgnore]
         public Guid PlayerId { get; set; }
         [JsonIgnore]
         public Player Player { get; set; }
+
     }
 }
