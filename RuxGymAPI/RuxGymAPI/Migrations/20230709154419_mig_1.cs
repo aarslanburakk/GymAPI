@@ -161,7 +161,7 @@ namespace RuxGymAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    isPremium = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsPremium = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     EndPremiumDay = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PlayerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
@@ -182,7 +182,7 @@ namespace RuxGymAPI.Migrations
                 name: "PlayerStats",
                 columns: table => new
                 {
-                    ID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ALlPower = table.Column<float>(type: "float", nullable: false),
                     ArmPower = table.Column<float>(type: "float", nullable: false),
                     SixpackPower = table.Column<float>(type: "float", nullable: false),
@@ -202,7 +202,7 @@ namespace RuxGymAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlayerStats", x => x.ID);
+                    table.PrimaryKey("PK_PlayerStats", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PlayerStats_Players_PlayerId",
                         column: x => x.PlayerId,

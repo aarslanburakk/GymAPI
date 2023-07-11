@@ -11,8 +11,8 @@ using RuxGymAPI.Context;
 namespace RuxGymAPI.Migrations
 {
     [DbContext(typeof(RuxGymDBcontext))]
-    [Migration("20230709122808_mig_2")]
-    partial class mig_2
+    [Migration("20230709154419_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -207,11 +207,11 @@ namespace RuxGymAPI.Migrations
                     b.Property<string>("EndPremiumDay")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsPremium")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<Guid>("PlayerId")
                         .HasColumnType("char(36)");
-
-                    b.Property<bool>("isPremium")
-                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
@@ -328,7 +328,7 @@ namespace RuxGymAPI.Migrations
             modelBuilder.Entity("RuxGymAPI.Models.PlayerGymItem", b =>
                 {
                     b.HasOne("RuxGymAPI.Models.Player", "Player")
-                        .WithOne("GymItem")
+                        .WithOne("PlayerGymItem")
                         .HasForeignKey("RuxGymAPI.Models.PlayerGymItem", "PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -371,13 +371,13 @@ namespace RuxGymAPI.Migrations
 
             modelBuilder.Entity("RuxGymAPI.Models.Player", b =>
                 {
-                    b.Navigation("GymItem")
-                        .IsRequired();
-
                     b.Navigation("PlayerBoxing")
                         .IsRequired();
 
                     b.Navigation("PlayerEnergy")
+                        .IsRequired();
+
+                    b.Navigation("PlayerGymItem")
                         .IsRequired();
 
                     b.Navigation("PlayerPremium")

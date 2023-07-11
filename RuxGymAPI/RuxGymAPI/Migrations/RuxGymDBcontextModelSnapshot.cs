@@ -325,7 +325,7 @@ namespace RuxGymAPI.Migrations
             modelBuilder.Entity("RuxGymAPI.Models.PlayerGymItem", b =>
                 {
                     b.HasOne("RuxGymAPI.Models.Player", "Player")
-                        .WithOne("GymItem")
+                        .WithOne("PlayerGymItem")
                         .HasForeignKey("RuxGymAPI.Models.PlayerGymItem", "PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -368,13 +368,13 @@ namespace RuxGymAPI.Migrations
 
             modelBuilder.Entity("RuxGymAPI.Models.Player", b =>
                 {
-                    b.Navigation("GymItem")
-                        .IsRequired();
-
                     b.Navigation("PlayerBoxing")
                         .IsRequired();
 
                     b.Navigation("PlayerEnergy")
+                        .IsRequired();
+
+                    b.Navigation("PlayerGymItem")
                         .IsRequired();
 
                     b.Navigation("PlayerPremium")
