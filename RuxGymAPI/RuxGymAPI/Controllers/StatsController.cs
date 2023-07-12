@@ -76,7 +76,7 @@ namespace RuxGymAPI.Controllers
         }
 
         [HttpPut("UpdateBoxData")]
-        public async Task<IActionResult> UpdatePlayerStat(string userId, PlayerBoxing data)
+        public async Task<IActionResult> UpdatePlayerStat(string userId, UpdatePlayerBoxVM data)
         {
             var updateData = await _context.PlayerBoxings.FirstOrDefaultAsync(c => c.PlayerId == Guid.Parse(userId));
 

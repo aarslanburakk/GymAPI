@@ -99,10 +99,9 @@ namespace RuxGymAPI.Repository
             player.PlayerBoxing = playerBoxing;
 
 
+
+
             await _context.AddAsync(player);
-
-
-
             await _context.SaveChangesAsync();
 
 
