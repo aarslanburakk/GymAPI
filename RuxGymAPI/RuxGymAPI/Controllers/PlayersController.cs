@@ -78,7 +78,14 @@ namespace RuxGymAPI.Controllers
             }
         }
 
-        
+
+        [HttpGet("GetPlayerData")]
+        public async Task<IActionResult> GetPlayer(string id)
+        {
+            Player player = await repository.GetPlayerData(id);
+
+            return Ok(player);
+        }
 
         [HttpGet("facebookId")]
         public async Task<IActionResult> GetFacebookUser(string facebookId)
@@ -159,7 +166,7 @@ namespace RuxGymAPI.Controllers
             return Ok(d.Version);
 
         }
-        [HttpDelete("version")]
+        [HttpDelete("code")]
         public async Task<IActionResult> delete()
         {
             await repository.DeleteCodes();

@@ -11,7 +11,7 @@ using RuxGymAPI.Context;
 namespace RuxGymAPI.Migrations
 {
     [DbContext(typeof(RuxGymDBcontext))]
-    [Migration("20230712112622_mig_1")]
+    [Migration("20230729192400_mig_1")]
     partial class mig_1
     {
         /// <inheritdoc />
@@ -121,8 +121,8 @@ namespace RuxGymAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("BoxHighScore")
-                        .HasColumnType("int");
+                    b.Property<ulong>("BoxHighScore")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<ulong>("BoxPower")
                         .HasColumnType("bigint unsigned");

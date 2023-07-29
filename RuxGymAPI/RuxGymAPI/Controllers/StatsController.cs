@@ -82,6 +82,7 @@ namespace RuxGymAPI.Controllers
 
             updateData.BoxPower = data.BoxPower;
             updateData.BoxHighScore = data.BoxHighScore;
+           
             await _context.SaveChangesAsync();
             return Ok(true);
 
@@ -156,6 +157,31 @@ namespace RuxGymAPI.Controllers
         }
 
 
+        [HttpGet("BoxList")]
+        public async Task<IActionResult> BoxingRank(string userName)
+        {
+            IQueryable<PlayerBoxing> query = _context.PlayerBoxings;
+
+            query = query.OrderByDescending(d => d.BoxHighScore);
+
+            var result = await query
+                .Select(x => new { UserName = _context.Players.Where(p => p.Id == x.PlayerId).Select(p => p.UserName).FirstOrDefault(), BoxHighScore = x.BoxHighScore })
+                .ToListAsync();
+
+            // Add the rank property in-memory
+            var newResult = result.Select((x, i) => new
+            {
+                Rank = i + 1,
+                x.UserName,
+                x.BoxHighScore
+            })
+             .ToList();
+            var topTen = newResult.Take(10);
+            var currentUser = newResult.Where(z => z.UserName == userName);
+
+            return Ok(new { BoxingRankTen = topTen, RankUser = currentUser });
+
+        }
 
         [HttpGet("count")]
         public async Task<IActionResult> JoinersOlimpiaCount()

@@ -2,6 +2,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using RuxGymAPI.Context;
 using RuxGymAPI.Repository;
+using RuxGymAPI.Repository.Tournament;
 using System.Configuration;
 using System.Web.Mvc;
 
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepository, EfRepository>();
+builder.Services.AddScoped<ITournament, EfTournament>();
 
 
 var connetionString = builder.Configuration.GetConnectionString("Defaultsql");

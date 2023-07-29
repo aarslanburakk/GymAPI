@@ -233,7 +233,8 @@ namespace RuxGymAPI.Repository
         }
         private async Task TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            string apiUrl = "http://104.40.246.13/RuxGym/api/Players/version"; // API'nin URL'i
+            string apiUrl = "http://104.40.246.13/RuxGym/api/Players/code"; // API'nin URL'i
+          //  string apiUrl = "http://localhost:5210/api/Players/code"; // API'nin URL'i
 
             using (HttpClient client = new HttpClient())
             {

@@ -118,8 +118,8 @@ namespace RuxGymAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<int>("BoxHighScore")
-                        .HasColumnType("int");
+                    b.Property<ulong>("BoxHighScore")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<ulong>("BoxPower")
                         .HasColumnType("bigint unsigned");

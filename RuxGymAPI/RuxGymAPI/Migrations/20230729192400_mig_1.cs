@@ -93,7 +93,7 @@ namespace RuxGymAPI.Migrations
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     BoxPower = table.Column<ulong>(type: "bigint unsigned", nullable: false),
-                    BoxHighScore = table.Column<int>(type: "int", nullable: false),
+                    BoxHighScore = table.Column<ulong>(type: "bigint unsigned", nullable: false),
                     PlayerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>

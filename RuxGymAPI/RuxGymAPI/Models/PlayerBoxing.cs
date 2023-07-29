@@ -7,7 +7,7 @@ namespace RuxGymAPI.Models
         [JsonIgnore]
         public Guid Id { get; set; } = Guid.NewGuid();
         public ulong BoxPower { get; set; } = 0;
-        public int BoxHighScore { get; set; } = 0;
+        public ulong BoxHighScore { get; set; } = 0;
         [JsonIgnore]
         public Guid PlayerId { get; set; }
         [JsonIgnore]
